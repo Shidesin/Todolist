@@ -19,7 +19,7 @@ export type TodoListType = {
     filter: filterValueType
 }
 
-type TaskStateType = {
+export type TasksStateType = {
     [key: string]: Array<TaskType>
 }
 
@@ -35,7 +35,7 @@ function App() {
         {id: todolistID2, title: 'Pets', filter: 'all'}
     ])
 
-    let [tasks, setTasks] = useState<TaskStateType>({
+    let [tasks, setTasks] = useState<TasksStateType>({
         [todolistID1]: [
             {id: v1(), title: 'JS', isDone: false},
             {id: v1(), title: 'CSS', isDone: true},
@@ -72,6 +72,21 @@ function App() {
         }
     }
 
+    function removeTodoList(todoListId: string) {
+        let newTDL = TodoLists.filter(tl => tl.id !== todoListId);
+        setTodoLists(newTDL);
+        delete tasks[todoListId];
+        setTasks({...tasks});
+    }
+
+    function changeTodoListTitle(todoListId: string, newTitle: string) {
+        const todoList = TodoLists.find(tl => tl.id === todoListId)
+        if (todoList) {
+            todoList.title = newTitle;
+            setTodoLists([...TodoLists])
+        }
+    }
+
     function removeTask(taskId: string, todoListId: string) {
         let todoList = tasks[todoListId];
         tasks[todoListId] = todoList.filter(t => t.id !== taskId)
@@ -94,13 +109,6 @@ function App() {
         }
     }
 
-    function removeTodoList(todoListId: string) {
-        let newTDL = TodoLists.filter(tl => tl.id !== todoListId);
-        setTodoLists(newTDL);
-        delete tasks[todoListId];
-        setTasks({...tasks});
-    }
-
     function changeTaskTitle(id: string, title: string, todoListId: string) {
         let todoList = tasks[todoListId];
         let task = todoList.find(t => t.id === id);
@@ -110,13 +118,7 @@ function App() {
         }
     }
 
-    function changeTodoListTitle(todoListId: string, newTitle: string) {
-        const todoList = TodoLists.find(tl => tl.id === todoListId)
-        if (todoList) {
-            todoList.title = newTitle;
-            setTodoLists([...TodoLists])
-        }
-    }
+
 
     return (
         <div className="App" >
