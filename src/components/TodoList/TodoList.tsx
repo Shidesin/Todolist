@@ -1,15 +1,18 @@
-import React, {useCallback} from 'react';
-import {AddItemForm} from './AddItemForm';
-import {EditableSpan} from './EditableSpan';
+import React, {useCallback, useEffect} from 'react';
+import {AddItemForm} from '../../common/components/AddIetmForm/AddItemForm';
+import {EditableSpan} from '../../common/components/EditableSpan/EditableSpan';
 import {Button, IconButton} from '@material-ui/core';
 import {Delete} from '@material-ui/icons';
-import {useSelector} from 'react-redux';
-import {AppRootStateType} from './state/store';
-import {Task} from './Task';
-import {TaskStatuses, TaskType} from './api/todolist-api';
-import {filterValueType, TodolistDomainType} from './state/todolist-reduser';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppRootStateType} from '../../state/store';
+import {Task} from '../Task/Task';
+import {TaskStatuses, TaskType} from '../../api/todolist-api';
+import {filterValueType, TodolistDomainType} from '../../state/todolist-reduser';
+import {fetchSetTasksTC} from '../../state/tasks-reduser';
+import {RequestStatusType} from '../../state/appReducer';
 
 type PropsType = {
+    entityStatus: RequestStatusType
     id: string
     title: string
     tasks: Array<TaskType>
@@ -25,6 +28,12 @@ type PropsType = {
 
 
 const TodoList = React.memo(function (props: PropsType) {
+
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(fetchSetTasksTC(props.id))
+    },[props.id])
 
     let todolst = useSelector<AppRootStateType, TodolistDomainType | undefined>(state => state.todolists.find(todo => {
         return todo && todo.id === props.id
@@ -64,11 +73,11 @@ const TodoList = React.memo(function (props: PropsType) {
                 <EditableSpan value={props.title} changeValue={changetodoListTitle}/>
                 <IconButton size={'small'} onClick={() => {
                     props.removeTodoList(props.id)
-                }}>
+                }} disabled={props.entityStatus === 'loading'} >
                     <Delete/>
                 </IconButton>
             </h3>
-            <AddItemForm addItem={addTask}/>
+            <AddItemForm addItem={addTask} entityStatus={props.entityStatus } />
             <ul style={{listStyle: 'none', paddingLeft: '0px'}}>
                 {
                     tasksToDoList.map(task => <Task

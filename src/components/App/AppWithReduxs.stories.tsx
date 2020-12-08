@@ -1,8 +1,6 @@
 import React from 'react';
 import AppWithRedux from './AppWithReduxs';
-import {Provider} from 'react-redux';
-import {store} from './state/store';
-import {ReduxStoreProviderDecorator} from './ReduxStoreProviderDecorator';
+import {ReduxStoreProviderDecorator} from '../../state/ReduxStoreProviderDecorator';
 
 
 export default {

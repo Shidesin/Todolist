@@ -44,8 +44,7 @@ export enum TaskPriorities {
 
 export type UpdateTaskModelType = {
     title: string
-    description: string
-    completed: boolean
+    description: string | null
     status: TaskStatuses
     priority: TaskPriorities
     startDate: string
@@ -60,7 +59,7 @@ export type TodolistType = {
     title: string
 }
 
-type CommonResponceType<D = {}> = {
+export type CommonResponceType<D = {}> = {
     resultCode: number
     fieldsError: Array<string>
     messages: Array<string>,
@@ -77,8 +76,8 @@ export const todolistAPI = {
     deleteTodoLists(todolistId: string) {
         return instance.delete<CommonResponceType>(`todo-lists/${todolistId}`)
     },
-    updateTodoLists(todolistId: string, title: string) {
-        return instance.put<CommonResponceType>(`todo-lists/${todolistId}`, {title})
+    updateTodoLists(todolistId: string, title: string, model: TodolistType) {
+        return instance.put<CommonResponceType>(`todo-lists/${todolistId}`, model)
     },
     getTasks(todolistId: string) {
         return instance.get<ResponseTasksType>(`todo-lists/${todolistId}/tasks`)
@@ -90,6 +89,6 @@ export const todolistAPI = {
         return instance.delete<CommonResponceType>(`todo-lists/${todolistId}/tasks/${taskId}`)
     },
     createTask(todolistId: string, title: string){
-        return instance.post<CommonResponceType<TaskType>>(`todo-lists/${todolistId}/tasks`, {title})
+        return instance.post<CommonResponceType<{item: TaskType }>>(`todo-lists/${todolistId}/tasks`, {title})
     }
 }
